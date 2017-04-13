@@ -34,20 +34,20 @@ RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install zip
 
+# Add hosts
+RUN echo "127.0.0.1  mysql webserver drupal" >> /etc/hosts
+
 # Configure php.
 COPY config/php/php.ini /usr/local/etc/php/php.ini
 
 # Configure Nginx
 COPY config/nginx/default.conf /etc/nginx/sites-available/default
 
+# Install composer binary
+RUN curl -k -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 # Install Drush binary
 RUN php -r "readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');" > /tmp/drush \
     && php /tmp/drush core-status \
     && chmod +x /tmp/drush \
     && mv /tmp/drush /usr/local/bin/
-
-# Transfer application
-
-# Run Php-fpm
-CMD ["service", "nginx start"]
-CMD ["php-fpm"]
