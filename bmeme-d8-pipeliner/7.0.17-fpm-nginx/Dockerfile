@@ -21,11 +21,13 @@ RUN apt-get update \
         vim \
         zip \
         unzip \
+        mysql-client \
+        sendmail \
         nginx
 
 # Install MariaDb
-RUN export DEBIAN_FRONTEND=noninteractive && \
-    apt-get install -q -y mariadb-server mariadb-client
+#RUN export DEBIAN_FRONTEND=noninteractive && \
+#    apt-get install -q -y mariadb-server mariadb-client
 
 # Install php libraries
 RUN docker-php-ext-install pdo_mysql \
@@ -35,7 +37,7 @@ RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-install zip
 
 # Add hosts
-RUN echo "127.0.0.1  mysql webserver drupal" >> /etc/hosts
+#RUN echo "127.0.0.1  mysql webserver drupal" >> /etc/hosts
 
 # Configure php.
 COPY config/php/php.ini /usr/local/etc/php/php.ini
