@@ -33,6 +33,9 @@ RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install zip
 
+# Create SSH structure
+RUN mkdir /root/.ssh && chmod 700 /root/.ssh
+
 # Configure php.
 COPY config/php/php.ini /usr/local/etc/php/php.ini
 
