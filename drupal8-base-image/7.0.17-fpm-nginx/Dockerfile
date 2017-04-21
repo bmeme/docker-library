@@ -9,6 +9,10 @@ RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list.d/
 	echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list.d/dotdeb.list && \
 	wget -O- http://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
+# Download and add ansible PPA packages
+RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list.d/ansible.list && \
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+
 # Build stack
 RUN apt-get update \
 	&& apt-get install -y libpng12-0 \
