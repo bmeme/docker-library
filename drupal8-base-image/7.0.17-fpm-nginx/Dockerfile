@@ -23,6 +23,7 @@ RUN apt-get update \
         unzip \
         mysql-client \
         sendmail \
+        ansible \
         nginx
 
 # Install php libraries
@@ -37,6 +38,9 @@ COPY config/php/php.ini /usr/local/etc/php/php.ini
 
 # Configure Nginx
 COPY config/nginx/default.conf /etc/nginx/sites-available/default
+
+# Install Ansistrano
+RUN ansible-galaxy install carlosbuenosvinos.ansistrano-deploy carlosbuenosvinos.ansistrano-rollback
 
 # Install composer binary
 RUN curl -k -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
