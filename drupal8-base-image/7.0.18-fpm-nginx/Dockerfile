@@ -35,7 +35,8 @@ RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-install -j$(nproc) json iconv mcrypt\
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install zip
+    && docker-php-ext-install zip \
+    && docker-php-ext-install bcmath
 
 # Create SSH structure
 RUN mkdir /root/.ssh && chmod 700 /root/.ssh
