@@ -2,7 +2,7 @@ FROM php:7.0.18-fpm
 MAINTAINER Daniele Piaggesi <daniele.piaggesi@bmeme.com>
 
 # Download basic packages
-RUN apt-get update && apt-get install -y build-essential wget
+RUN apt-get update && apt-get install -y build-essential wget libpcre3-dev
 
 # Download and add dotdeb packages
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list.d/dotdeb.list && \
@@ -37,6 +37,9 @@ RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install zip \
     && docker-php-ext-install bcmath
+
+# Install Oauth extension useful to some Drupal modules
+RUN pecl channel-update pecl.php.net && pecl install oauth
 
 # Create SSH structure
 RUN mkdir /root/.ssh && chmod 700 /root/.ssh
