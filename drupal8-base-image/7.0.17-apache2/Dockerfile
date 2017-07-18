@@ -4,12 +4,6 @@ MAINTAINER Daniele Piaggesi <daniele.piaggesi@bmeme.com>
 # Download basic packages
 RUN apt-get update && apt-get install -y build-essential wget
 
-# Add non-free repositories to sources.list
-#RUN mv /etc/apt/sources.list /etc/apt/sources.list.off &&
-#  echo "deb  http://deb.debian.org/debian jessie main contrib non-free" >> /etc/apt/sources.list &&
-#  echo "deb  http://deb.debian.org/debian jessie-updates main contrib non-free" >> /etc/apt/sources.list &&
-#  echo "deb-src http://security.debian.org/ jessie/updates main contrib non-free" >> /etc/apt/sources.list
-
 # Download and add dotdeb packages
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list.d/dotdeb.list && \
 	echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list.d/dotdeb.list && \

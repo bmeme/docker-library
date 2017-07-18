@@ -28,7 +28,8 @@ RUN apt-get update \
         mysql-client \
         sendmail \
         ansible \
-        nginx
+        nginx \
+        supervisor
 
 # Install php libraries
 RUN docker-php-ext-install pdo_mysql \
@@ -50,6 +51,10 @@ COPY config/php/php.ini /usr/local/etc/php/php.ini
 # Configure Nginx
 COPY config/nginx/default.conf /etc/nginx/sites-available/default
 
+# Configure supervisord
+RUN mkdir -p /var/log/supervisor
+ADD config/supervisor/supervisord.conf /etc/supervisord.conf
+
 # Install Ansistrano
 RUN ansible-galaxy install carlosbuenosvinos.ansistrano-deploy carlosbuenosvinos.ansistrano-rollback
 
@@ -61,3 +66,8 @@ RUN php -r "readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');" > 
     && php /tmp/drush core-status \
     && chmod +x /tmp/drush \
     && mv /tmp/drush /usr/local/bin/
+
+COPY scripts/start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
