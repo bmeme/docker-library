@@ -41,6 +41,7 @@ RUN apt-get update \
         libpq-dev \
         zlib1g-dev \
         libicu-dev \
+        nginx \
         g++ \
         graphviz \
         ansible \
@@ -79,7 +80,8 @@ RUN mkdir /root/.ssh && chmod 700 /root/.ssh
 COPY config/php/php.ini /usr/local/etc/php/php.ini
 COPY config/php/mailhog.ini /usr/local/etc/php/conf.d/
 RUN echo "date.timezone = ${TIMEZONE}" >> /usr/local/etc/php/php.ini \
-    && echo "extension=oauth.so" >> /usr/local/etc/php/php.ini
+    && echo "extension=oauth.so" >> /usr/local/etc/php/php.ini \
+    && echo "extension=xdebug.so" >> /usr/local/etc/php/php.ini
 
 # Configure Nginx
 COPY config/nginx/default.conf /etc/nginx/sites-available/default
