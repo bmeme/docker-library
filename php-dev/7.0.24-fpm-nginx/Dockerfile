@@ -7,7 +7,14 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV XDEBUG_VERSION 2.5.5
 ENV TIMEZONE "Europe/Rome"
 ENV MAILHOG_VERSION "v0.1.9"
+
+# PHP env variables.
 ENV COMPOSER_HOME "/.composer"
+ENV PHP_MEMORY_LIMIT "512M"
+ENV PHP_ERROR_LOG "/tmp/php_errors.log"
+ENV UPLOAD_MAX_FILESIZE "20M"
+ENV POST_MAX_SIZE "20M"
+ENV AUTO_PREPEND_FILE "${COMPOSER_HOME}/vendor/autoload.php"
 
 # Download basic packages
 RUN apt-get update && apt-get install -y build-essential wget libpcre3-dev
@@ -37,7 +44,6 @@ RUN apt-get update \
         cron \
         rsyslog \
         supervisor \
-        git \
         libpq-dev \
         zlib1g-dev \
         libicu-dev \
@@ -77,11 +83,8 @@ RUN mkdir ${COMPOSER_HOME} \
 RUN mkdir /root/.ssh && chmod 700 /root/.ssh
 
 # Configure php.
-COPY config/php/php.ini /usr/local/etc/php/php.ini
-COPY config/php/mailhog.ini /usr/local/etc/php/conf.d/
-COPY config/php/xdebug.ini /usr/local/etc/php/conf.d/
-RUN echo "date.timezone = ${TIMEZONE}" >> /usr/local/etc/php/php.ini \
-    && echo "extension=oauth.so" >> /usr/local/etc/php/php.ini
+COPY config/php/*.ini /usr/local/etc/php/conf.d/
+RUN echo "clear_env = no" >> /usr/local/etc/php-fpm.d/www.conf
 
 # Configure Nginx
 COPY config/nginx/default.conf /etc/nginx/sites-available/default
@@ -111,14 +114,12 @@ RUN unzip /ngrok.zip -d /bin \
     && rm -f ngrok.zip \
     && touch /.ngrok
 
-# Install Drush binary
-ADD https://s3.amazonaws.com/files.drush.org/drush.phar /usr/local/bin/drush
-RUN chmod +x /usr/local/bin/drush \
-    && /usr/local/bin/drush core-status
+# Add PHPINFO
+COPY scripts/index.php /var/www/html/index.php
 
 COPY scripts/start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 80
+EXPOSE 80 443 9001
 
 CMD ["/start.sh"]
