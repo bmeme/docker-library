@@ -87,3 +87,12 @@ This image is using `supervisor` to start at the same time:
 - apache2 or nginx
 - rsyslog
 - cron
+
+### Documentation
+To Be Done.
+
+### Credits
+This project is a contribution of [Bmeme :: The Digital Factory](http://www.bmeme.com).
+This library is actually maintained by [Daniele Piaggesi](mailto:daniele.piaggesi@bmeme.com). 
+Really thanks to [Francesco Pesenti](mailto:francesco.pesenti@psegno.it) aka `Pex` of [Psegno](http://www.psegno.it) for 5.6.x image and some other fixes and tests.
+Any other contribution will be really appreciated.
