@@ -1,21 +1,23 @@
 FROM php:5.6.31-apache
 MAINTAINER Daniele Piaggesi <daniele.piaggesi@bmeme.com>
-
-ENV DEBIAN_FRONTEND noninteractive
-
-# Enable apache rewrite.
-RUN a2enmod rewrite
+ENV REFRESHED_AT 2017-11-17
 
 # System env variables.
-ENV XDEBUG_VERSION 2.4.0
-ENV DRUSH_VERSION 8.0.5
-ENV VAR_DUMPER_VERSION 3.0.3
-ENV GOSU_VERSION 1.7
-ENV MAILHOG_VERSION v0.1.9
+ENV DEBIAN_FRONTEND noninteractive
+ENV XDEBUG_VERSION 2.5.5
 ENV TIMEZONE "Europe/Rome"
+ENV MAILHOG_VERSION "v0.1.9"
+
+# PHP env variables.
+ENV COMPOSER_HOME "/.composer"
+ENV PHP_MEMORY_LIMIT "512M"
+ENV PHP_ERROR_LOG "/tmp/php_errors.log"
+ENV UPLOAD_MAX_FILESIZE "20M"
+ENV POST_MAX_SIZE "20M"
+ENV AUTO_PREPEND_FILE "${COMPOSER_HOME}/vendor/autoload.php"
 
 # Download basic packages
-RUN apt-get update && apt-get install -y build-essential wget sendmail
+RUN apt-get update && apt-get install -y build-essential wget libpcre3-dev
 
 # Download and add dotdeb packages
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list.d/dotdeb.list && \
@@ -42,7 +44,6 @@ RUN apt-get update \
         cron \
         rsyslog \
         supervisor \
-        git \
         libpq-dev \
         zlib1g-dev \
         libicu-dev \
@@ -56,7 +57,7 @@ RUN apt-get update \
 
 # Install php libraries and configure PHP
 RUN docker-php-ext-install pdo_mysql \
-    && docker-php-ext-install -j$(nproc) json iconv mcrypt\
+    && docker-php-ext-install -j$(nproc) json iconv mcrypt \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install zip \
@@ -65,34 +66,30 @@ RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-install mcrypt \
     && docker-php-ext-install sockets \
     && docker-php-ext-install intl \
-    && pecl install xdebug-${XDEBUG_VERSION}
+    && pecl install xdebug-${XDEBUG_VERSION} \
+    && echo "${TIMEZONE}" > /etc/timezone
 
 # Install composer and other stuff
-ENV COMPOSER_HOME /composer-libs
-RUN mkdir /composer-libs \
+RUN mkdir ${COMPOSER_HOME} \
     && curl -k -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer global require symfony/var-dumper \
-    && chown -R www-data:www-data /composer-libs \
-    && curl -fSL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-$(dpkg --print-architecture)" -o /usr/bin/gosu \
+    && chown -R www-data:www-data ${COMPOSER_HOME} \
     && curl -fSL "https://github.com/mailhog/MailHog/releases/download/${MAILHOG_VERSION}/MailHog_linux_amd64" -o /usr/local/bin/mailhog \
-    && chmod +x /usr/local/bin/mailhog \
-    && ansible-galaxy install carlosbuenosvinos.ansistrano-deploy carlosbuenosvinos.ansistrano-rollback
+    && chmod +x /usr/local/bin/mailhog
 
-# Install Drush binary
-RUN php -r "readfile('https://s3.amazonaws.com/files.drush.org/drush.phar');" > /tmp/drush \
-    && php /tmp/drush core-status \
-    && chmod +x /tmp/drush \
-    && mv /tmp/drush /usr/local/bin/
+# Create SSH structure
+RUN mkdir /root/.ssh && chmod 700 /root/.ssh
 
-# Configure PHP / Apache / Supervisord
-COPY config/php/php.ini /usr/local/etc/php/php.ini
-COPY config/php/conf.d/*.ini /usr/local/etc/php/conf.d/
-RUN echo "date.timezone = \"UTC\"" >> /usr/local/etc/php/conf.d/timezone.ini
+# Configure php.
+COPY config/php/*.ini /usr/local/etc/php/conf.d/
+
+# Configure Apache2
 COPY config/apache2/000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY config/supervisord/*.conf /etc/supervisor/conf.d/
-RUN mkdir -p /usr/local/etc/php/apache2 && \
-    cp -R /usr/local/etc/php/conf.d /usr/local/etc/php/apache2 && \
-    echo 'export PHP_INI_SCAN_DIR=/usr/local/etc/php/apache2/conf.d' >> /etc/apache2/envvars
+RUN a2enmod rewrite
+
+# Configure supervisord
+RUN mkdir -p /var/log/supervisor
+ADD config/supervisor/supervisord.conf /etc/supervisord.conf
 
 # Configure cron.
 COPY config/cron/crontab /etc/cron.d/cron
@@ -103,23 +100,24 @@ RUN rm -Rf /etc/cron.daily  && \
     chmod a+x /etc/cron.d/cron
 
 # Install blackfire agent.
-RUN export VERSION=`php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;"` \
+RUN VERSION=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
     && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/${VERSION} \
     && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp \
-    && mv /tmp/blackfire-*.so `php -r "echo ini_get('extension_dir');"`/blackfire.so \
-    && echo "extension=blackfire.so\nblackfire.agent_socket=\${BLACKFIRE_PORT}" > $PHP_INI_DIR/apache2/conf.d/blackfire.ini
+    && mv /tmp/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
+    && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > ${PHP_INI_DIR}/conf.d/blackfire.ini
 
 # Install ngrok.
 ADD https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip /ngrok.zip
-RUN unzip /ngrok.zip -d /bin && \
-    rm -f ngrok.zip && \
-    touch /.ngrok
+RUN unzip /ngrok.zip -d /bin \
+    && rm -f ngrok.zip \
+    && touch /.ngrok
 
-# Create SSH structure
-RUN mkdir /root/.ssh && chmod 700 /root/.ssh
+# Add PHPINFO
+COPY scripts/index.php /var/www/html/index.php
 
-# Expose apache.
-EXPOSE 80
+COPY scripts/start.sh /start.sh
+RUN chmod +x /start.sh
 
-# Execute daemons.
-CMD exec supervisord -n
+EXPOSE 80 443 9001
+
+CMD ["/start.sh"]
