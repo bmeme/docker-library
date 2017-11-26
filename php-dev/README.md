@@ -2,7 +2,9 @@
 These are Docker images based on Debian/Jessie with a working webserver, ready to be used for php development. They are all built starting from [official PHP repository](https://hub.docker.com/_/php/) as you can see looking our Dockerfile (see previous paragraph).
 
 ### Supported tags and respective `Dockerfile` links
-- `7.0.24-fpm-nginx` or `latest`.
+- `7.0.24-fpm-nginx`, `7.0`, `7.0-fpm-nginx` or `latest` [Dockerfile](https://github.com/bmeme/docker-library/blob/master/php-dev/7.0.24-fpm-nginx/Dockerfile)
+- `7.0.24-apache`, `7.0-apache` [Dockerfile](https://github.com/bmeme/docker-library/blob/master/php-dev/7.0.24-apache/Dockerfile) 
+- `5.6.31-apache2`, `5.6`, `5.6-apache` [Dockerfile] (https://github.com/bmeme/docker-library/blob/master/php-dev/5.6.31-apache2/Dockerfile)
 
 ### Packages contained in all images
 - DotDeb APT repositories, stored in `/etc/apt/sources.d`
