@@ -56,23 +56,25 @@ If you want to customise PHP settings look at the following paragraph before to 
 Follow instructions in database image repository to correctly match available environments.
 
 ## Via `docker-compose`
-`version: '3.1'`
-`services:`
-&nbsp;&nbsp;&nbsp;&nbsp;`php-dev:`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`image: php-dev:7.0.24-fpm-nginx`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ports:`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`- 8080:80`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;` - 8443:443`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`- 9001:9001 # xdebug port`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`environment: # just as example`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`- UPLOAD_MAX_FILESIZE=100M`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`- POST_MAX_SIZE=100M`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`restart: always`
-&nbsp;&nbsp;&nbsp;&nbsp;`postgres:`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`image: postgres:9.6`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`environment:`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`- POSTGRES_PASSWORD: example`
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`restart: always`
+```
+version: '3.1'
+services:
+  php-dev:
+    image: php-dev:7.0.24-fpm-nginx
+    ports:
+      - 8080:80
+      - 8443:443
+      - 9001:9001 # xdebug port
+    environment: # just as example
+      - UPLOAD_MAX_FILESIZE=100M
+      - POST_MAX_SIZE=100M
+    restart: always
+  postgres:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_PASSWORD: example
+    restart: always
+```
 
 Run `docker-compose -f php-dev.yml up`, wait for it to initialize completely, and visit `http://localhost:8080`, or `http://host-ip:8080` (as appropriate).
 
