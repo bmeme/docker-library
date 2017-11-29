@@ -10,19 +10,19 @@ These are Docker images based on Debian/Jessie with a working webserver, ready t
 - DotDeb APT repositories, stored in `/etc/apt/sources.d`
 - Some useful executables like: `wget`, `git`, `vim`, `zip` and `unzip`, `cron` with basic configuration, `rsyslog` to manage system logging, `mysql-client`, `ansible`.
 - `supervisord`explained later
-- The following php libraries (installed using `docker-php-ext-configure`/`docker-php-ext-install`): 
--- `bcmath`
--- `pdo_mysql`
--- `json`
--- `iconv`
--- `mcrypt`
--- `gd`
--- `zip`
--- `mbstring`
--- `mcrypt`
--- `sockets`
--- `intl`
--- `oauth`
+- The following php libraries (installed using `docker-php-ext-configure`/`docker-php-ext-install`):
+  - `bcmath`
+  - `pdo_mysql`
+  - `json`
+  - `iconv`
+  - `mcrypt`
+  - `gd`
+  - `zip`
+  - `mbstring`
+  - `mcrypt`
+  - `sockets`
+  - `intl`
+  - `oauth`
 - Composer package manager
 - Xdebug as debug tool
 - Blackfire php extension as profiler tool, usable in conjunction with [blackfire image](https://hub.docker.com/r/blackfire/blackfire/) (see documentation for examples)
@@ -31,7 +31,8 @@ These are Docker images based on Debian/Jessie with a working webserver, ready t
 - Ngrok to create secure tunnels to your container, very useful for some specific activites just like crossbrowser/crossdevice compatibility
 
 ### How to use this image
-## Manually
+
+## Manually
 Starting your PHP environment is really simple:
 `$ docker run --name some-name -p 8080:80 -d bmeme/php-dev:tag`
 where `some-name` is the name you want to assign to your container and `tag` is the tag specifying the image version you want. See the list above for relevant tags. Pointing your browser to `http://localhost:8080` you'll see the complete `phpinfo`.
@@ -40,7 +41,7 @@ Obviously you can change the local binding port matching your needs.
 ## Using a Dockerfile
 `FROM php-dev:7.0.24-fpm-nginx`
 `COPY src/ /var/www/html/`
-Where src/ is the directory containing all your PHP code. 
+Where src/ is the directory containing all your PHP code.
 Then, run the commands to build and run the Docker image:
 `$ docker build -t my-php-dev-app .`
 `$ docker run -d --name my-running-app my-php-dev-app`
@@ -97,6 +98,6 @@ To Be Done.
 
 ### Credits
 This project is a contribution of [Bmeme :: The Digital Factory](http://www.bmeme.com).
-This library is actually maintained by [Daniele Piaggesi](mailto:daniele.piaggesi@bmeme.com). 
+This library is actually maintained by [Daniele Piaggesi](mailto:daniele.piaggesi@bmeme.com).
 Really thanks to [Francesco Pesenti](mailto:francesco.pesenti@psegno.it) aka `Pex` of [Psegno](http://www.psegno.it) for 5.6.x image and some other fixes and tests.
 Any other contribution will be really appreciated.
