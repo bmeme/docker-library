@@ -1,0 +1,19 @@
+version: '3.1'
+services:
+  php-dev:
+    build: ../../php-dev/7.0.24-fpm-nginx
+    ports:
+      - 8080:80
+      - 8443:443
+      - 9001:9001 # xdebug port
+    environment: # just as example
+      - UPLOAD_MAX_FILESIZE=100M
+      - POST_MAX_SIZE=100M
+    volumes:
+      - ./php-code:/var/www/html
+    restart: always
+  postgres:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_PASSWORD=example
+    restart: always
