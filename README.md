@@ -10,7 +10,7 @@ Docker Hub at this address: https://hub.docker.com/r/bmeme/.
 
 At the moment this repo contains:
 
-- drupal8-base-image: This is a **Drupal8-ready Docker Image**
+- php-dev: This is a **PHP-development-ready Docker Image**
 based on *Debian Jessie* with PHP.
 
 ## Examples
