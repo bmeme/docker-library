@@ -2,7 +2,7 @@
 These are Docker images based on Debian/Jessie with a working webserver, ready to be used for php development. They are all built starting from [official PHP repository](https://hub.docker.com/_/php/) as you can see looking our Dockerfile (see previous paragraph).
 
 ### Supported tags and respective `Dockerfile` links
-- `7.2.3-fpm-nginx`, `7.2`, `7.2-fpm-nginx` or `latest` [Dockerfile](https://github.com/bmeme/docker-library/blob/master/php-dev/7.2.3-fpm-nginx/Dockerfile)
+- `7.2.3-fpm-nginx`, `7.2`, `7.2-fpm-nginx`, `7` or `latest` [Dockerfile](https://github.com/bmeme/docker-library/blob/master/php-dev/7.2.3-fpm-nginx/Dockerfile)
 - `7.2.3-apache`, `7.2-apache` [Dockerfile](https://github.com/bmeme/docker-library/blob/master/php-dev/7.2.3-apache/Dockerfile)
 - `7.1.11-fpm-nginx`, `7.1`, `7.1-fpm-nginx` [Dockerfile](https://github.com/bmeme/docker-library/blob/master/php-dev/7.1.11-fpm-nginx/Dockerfile)
 - `7.0.24-fpm-nginx`, `7.0`, `7.0-fpm-nginx` [Dockerfile](https://github.com/bmeme/docker-library/blob/master/php-dev/7.0.24-fpm-nginx/Dockerfile)
@@ -10,7 +10,6 @@ These are Docker images based on Debian/Jessie with a working webserver, ready t
 - `5.6.31-apache2`, `5.6`, `5.6-apache`[Dockerfile](https://github.com/bmeme/docker-library/blob/master/php-dev/5.6.31-apache2/Dockerfile)
 
 ### Packages contained in all images
-- DotDeb APT repositories, stored in `/etc/apt/sources.d`
 - Some useful executables like: `wget`, `git`, `vim`, `zip` and `unzip`, `cron` with basic configuration, `rsyslog` to manage system logging, `mysql-client`, `ansible`.
 - `supervisord`explained later
 - The following php libraries (installed using `docker-php-ext-configure`/`docker-php-ext-install`):
@@ -22,16 +21,14 @@ These are Docker images based on Debian/Jessie with a working webserver, ready t
   - `gd`
   - `zip`
   - `mbstring`
-  - `mcrypt`
   - `sockets`
   - `intl`
   - `oauth`
 - Composer package manager
 - Xdebug as debug tool
-- Blackfire php extension as profiler tool, usable in conjunction with [blackfire image](https://hub.docker.com/r/blackfire/blackfire/) (see documentation for examples)
-- Symfony var-dumper packages installed by composer
-- Mailhog package usable in conjunction with [mailhog image](https://hub.docker.com/r/mailhog/mailhog/) via `sendmail`
-- Ngrok to create secure tunnels to your container, very useful for some specific activites just like crossbrowser/crossdevice compatibility
+- Symfony var-dumper package installed globally by composer
+- `mhsendmail` binary (see: https://www.lullabot.com/articles/debugging-php-email-with-mailhog)
+- The timezone of all images is set to "Europe/Rome"
 
 ### How to use this image
 
@@ -52,10 +49,12 @@ Then, run the commands to build and run the Docker image:
 If you want to customise PHP settings look at the following paragraph before to `COPY` a `php.ini` file into the container during the build process.
 
 ### Custom Environments
-- `PHP_MEMORY_LIMIT`, default at 512M
+- `PHP_MEMORY_LIMIT`, default at `512M`
+- `PHP_MAX_EXECUTION_TIME`, default at `60`
 - `PHP_ERROR_LOG`, default at `/tmp/php_errors.log`
 - `UPLOAD_MAX_FILESIZE`, default at `20M`
 - `POST_MAX_SIZE` default at `20M`
+- `XDEBUG_IDEKEY`default at `PHPSTORM`
 
 ## With a database image
 `$ docker run --name some-name --link some-db-image:some-tag -d bmeme/php-dev:tag`
@@ -89,15 +88,14 @@ The `php-dev` images come basically in two "main" flavour:
 - `php-fpm` engine with `nginx` embedded
 - php module engine with `apache2` embedded
 
+We consider the "php-fpm-nginx" flavour as default.
+
 ### Supervisord
 This image is using `supervisor` to start at the same time:
 - php-fpm if shipped
 - apache2 or nginx
 - rsyslog
 - cron
-
-### Documentation
-To Be Done.
 
 ### Credits
 This project is a contribution of [Bmeme :: The Digital Factory](http://www.bmeme.com).
