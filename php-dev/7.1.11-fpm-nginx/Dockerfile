@@ -6,7 +6,15 @@ ENV REFRESHED_AT 2018-08-02
 ENV XDEBUG_VERSION "2.5.5"
 ENV TIMEZONE "Europe/Rome"
 ENV MHSENDMAIL_VERSION "v0.2.0"
-ENV COMPOSER_HOME "/root/.composer"
+
+# PHP environment variables.
+ENV COMPOSER_HOME "/var/www/.composer"
+ENV PHP_MEMORY_LIMIT "512M"
+ENV PHP_ERROR_LOG "/tmp/php_errors.log"
+ENV UPLOAD_MAX_FILESIZE "20M"
+ENV POST_MAX_SIZE "20M"
+ENV AUTO_PREPEND_FILE "${COMPOSER_HOME}/vendor/autoload.php"
+ENV XDEBUG_IDEKEY "PHPSTORM"
 
 # Download all packages
 RUN apt-get update && \

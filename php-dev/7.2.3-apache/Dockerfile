@@ -8,7 +8,15 @@ ENV TIMEZONE "Europe/Rome"
 ENV MAILHOG_VERSION "v1.0.0"
 ENV MCRYPT_VERSION "1.0.1"
 ENV MHSENDMAIL_VERSION "v0.2.0"
-ENV COMPOSER_HOME "/root/.composer"
+
+# PHP environment variables.
+ENV COMPOSER_HOME "/var/www/.composer"
+ENV PHP_MEMORY_LIMIT "512M"
+ENV PHP_ERROR_LOG "/tmp/php_errors.log"
+ENV UPLOAD_MAX_FILESIZE "20M"
+ENV POST_MAX_SIZE "20M"
+ENV AUTO_PREPEND_FILE "${COMPOSER_HOME}/vendor/autoload.php"
+ENV XDEBUG_IDEKEY "PHPSTORM"
 
 # Download all packages
 RUN apt-get update && \
@@ -84,6 +92,7 @@ COPY config/cron/crontab /etc/cron.d/crontab
 # Add PHPINFO
 COPY scripts/index.php /var/www/html/index.php
 
+# Add start script
 COPY scripts/start.sh /start.sh
 RUN chmod +x /start.sh
 
