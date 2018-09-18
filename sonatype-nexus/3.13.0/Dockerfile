@@ -23,5 +23,3 @@ RUN mkdir -p ${TARGET_DIR} && \
     sed -i 's@<feature name="nexus-repository-maven"@<feature name="nexus-repository-helm" description="org.sonatype.nexus.plugins:nexus-repository-helm" version="0.0.2">\n        <details>org.sonatype.nexus.plugins:nexus-repository-helm</details>\n        <bundle>mvn:org.sonatype.nexus.plugins/nexus-repository-helm/0.0.2</bundle>\n        <bundle>mvn:org.apache.commons/commons-compress/1.11</bundle>\n   </feature>\n    <feature name="nexus-repository-maven"@g' /opt/sonatype/nexus/system/org/sonatype/nexus/assemblies/nexus-core-feature/${NEXUS_VERSION}-${NEXUS_BUILD}/nexus-core-feature-${NEXUS_VERSION}-${NEXUS_BUILD}-features.xml
 
 COPY --from=build /opt/nexus-repository-helm-${NEXUS_HELM_VERSION}/target/nexus-repository-helm-${NEXUS_HELM_VERSION}.jar ${TARGET_DIR}
-
-USER nexus

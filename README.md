@@ -12,6 +12,7 @@ At the moment this repo contains:
 
 - php-dev: This is a **PHP-development-ready Docker Image**
 based on *Debian Jessie* with PHP.
+- node-dev: This is a **Node-development-ready Docker Image** based on *Debian Jessie* 
 
 ## Examples
 You can give a try using our examples

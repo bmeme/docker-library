@@ -1,0 +1,104 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: nexus-sonatype-nexus
+  namespace: nexus
+  labels:
+    app: sonatype-nexus
+    fullname: nexus-sonatype-nexus
+    release: nexus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonatype-nexus
+      release: nexus
+  template:
+    metadata:
+      labels:
+        app: sonatype-nexus
+        release: nexus
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool #CHANGEIT: choose your preferred cluster pool
+
+      containers:
+        - name: nexus
+          image: bmeme/sonatype-nexus:3.13.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: install4jAddVmParams
+              value: -Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:+UnlockExperimentalVMOptions
+                -XX:+UseCGroupMemoryLimitForHeap
+
+          resources:
+            limits:
+              cpu: 250m
+              memory: 4800Mi
+            requests:
+              cpu: 200m
+              memory: 2400Mi
+
+          ports:
+            - containerPort: 5003
+              name: nexus-docker-g
+            - containerPort: 8081
+              name: nexus-http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 20
+          volumeMounts:
+            - mountPath: /nexus-data
+              name: nexus-data
+            - mountPath: /nexus-data/backup
+              name: nexus-backup
+        - name: nexus-proxy
+          image: quay.io/travelaudience/docker-nexus-proxy:2.3.0
+          resources:
+            limits:
+              cpu: 200m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
+              value: "GoogleHC"
+            - name: CLOUD_IAM_AUTH_ENABLED
+              value: "false"
+            - name: BIND_PORT
+              value: "8080"
+            - name: ENFORCE_HTTPS
+              value: "true"
+            - name: NEXUS_DOCKER_HOST
+              value: "containers.example.cloud" #CHANGEIT: Put it your domain for container registry service
+            - name: NEXUS_HTTP_HOST
+              value: "nexus.example.cloud" #CHANGEIT: Put it your domain for standard nexus service
+            - name: UPSTREAM_DOCKER_PORT
+              value: "5003"
+            - name: UPSTREAM_HTTP_PORT
+              value: "8081"
+            - name: UPSTREAM_HOST
+              value: "localhost"
+          ports:
+            - containerPort: 8080
+              name: nexus-proxy
+      volumes:
+        - name: nexus-data
+          persistentVolumeClaim:
+            claimName: nexus-sonatype-nexus-data
+        - name: nexus-backup
+          emptyDir: {}

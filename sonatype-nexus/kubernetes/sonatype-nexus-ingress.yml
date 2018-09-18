@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nexus-sonatype-nexus
+  namespace: nexus
+  labels:
+    app: sonatype-nexus
+    fullname: nexus-sonatype-nexus
+    release: nexus
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/tls-acme: "true"
+spec:
+  rules:
+    - host: containers.example.cloud #CHANGEIT: Put it your domain for container registry service
+      http:
+        paths:
+          - backend:
+              serviceName: nexus-sonatype-nexus
+              servicePort: 8080
+            path: /
+    - host: nexus.example.cloud #CHANGEIT: Put it your domain for container registry service
+      http:
+        paths:
+          - backend:
+              serviceName: nexus-sonatype-nexus
+              servicePort: 8080
+            path: /
+  tls:
+    - hosts:
+        - containers.bmeme.cloud #CHANGEIT: Put it your domain for container registry service
+        - nexus.bmeme.cloud #CHANGEIT: Put it your domain for container registry service
+      secretName: "nexus-tls"

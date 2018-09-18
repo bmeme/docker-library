@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nexus-sonatype-nexus
+  namespace: nexus
+  labels:
+    app: sonatype-nexus
+    fullname: nexus-sonatype-nexus
+    release: nexus
+spec:
+  ports:
+    - name:
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: sonatype-nexus
+    release: nexus
+  type: ClusterIP

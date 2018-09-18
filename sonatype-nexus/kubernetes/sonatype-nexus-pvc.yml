@@ -1,0 +1,16 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nexus-sonatype-nexus-data
+  namespace: nexus
+  labels:
+    app: sonatype-nexus
+    fullname: nexus-sonatype-nexus
+    release: nexus
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "50Gi" # Change at your convenience
+  storageClassName: "standard" # Choose your preferred storageClass
