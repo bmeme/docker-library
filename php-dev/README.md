@@ -39,8 +39,10 @@ where `some-name` is the name you want to assign to your container and `tag` is 
 Obviously you can change the local binding port matching your needs.
 
 ## Using a Dockerfile
-```FROM php-dev:7.0.24-fpm-nginx
-COPY src/ /var/www/html/```
+```
+FROM php-dev:7.0.24-fpm-nginx
+COPY src/ /var/www/html/
+```
 Where src/ is the directory containing all your PHP code.
 Then, run the commands to build and run the Docker image:
 `$ docker build -t my-php-dev-app .`
