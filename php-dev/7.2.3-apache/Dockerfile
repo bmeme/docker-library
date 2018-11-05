@@ -19,8 +19,9 @@ ENV AUTO_PREPEND_FILE "${COMPOSER_HOME}/vendor/autoload.php"
 ENV XDEBUG_IDEKEY "PHPSTORM"
 
 # Download all packages
-RUN apt-get update && \
-    apt-get install -y build-essential \
+RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list.d/ansible.list && \
+    apt-get update && \
+    apt-get install -y --allow-unauthenticated build-essential \
                         wget \
                         libpcre3-dev \
                         libpng16-16 \
