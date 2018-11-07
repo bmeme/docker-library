@@ -40,9 +40,14 @@ RUN apt-get update && \
                         nginx \
                         g++ \
                         graphviz \
-                        ansible && \
+                        gnupg \
+			            python-dev \
+                        python-pip && \
     apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    pip install --upgrade pip && \
+    pip install --upgrade setuptools && \
+    pip install ansible
 
 # Install php libraries and configure PHP
 RUN docker-php-ext-install pdo_mysql && \
