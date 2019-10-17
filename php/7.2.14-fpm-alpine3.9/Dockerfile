@@ -5,14 +5,18 @@ ENV REFRESHED_AT 2019-08-08
 # Variables
 ENV TIMEZONE "Europe/Rome"
 ENV MCRYPT_VERSION "1.0.2"
+ENV MHSENDMAIL_VERSION "v0.2.0"
 
 # PHP environment variables.
 ENV COMPOSER_HOME "/var/www/.composer"
 ENV PHP_MEMORY_LIMIT "512M"
+ENV PHP_MAX_EXECUTION_TIME "30"
+ENV PHP_LOG_ENABLED 1
 ENV PHP_ERROR_LOG "/tmp/php_errors.log"
-ENV UPLOAD_MAX_FILESIZE "20M"
-ENV POST_MAX_SIZE "20M"
-ENV AUTO_PREPEND_FILE "${COMPOSER_HOME}/vendor/autoload.php"
+ENV PHP_UPLOAD_MAX_FILESIZE "20M"
+ENV PHP_POST_MAX_SIZE "20M"
+ENV PHP_SENDMAIL "/usr/local/sendmail"
+ENV PHP_OPCACHE_ENABLED 0
 
 # Download all packages
 RUN apk add --no-cache $PHPIZE_DEPS \
@@ -29,7 +33,9 @@ RUN apk add --no-cache $PHPIZE_DEPS \
                         patch \
                         tzdata \
                         g++ \
-                        ansible
+                        ansible \
+                        git \
+                        mysql-client
 
 # Install php libraries and configure PHP
 RUN docker-php-ext-install pdo_mysql && \
@@ -52,12 +58,10 @@ RUN docker-php-ext-install pdo_mysql && \
     rm /etc/localtime && cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && \
     echo "${TIMEZONE}" > /etc/timezone
 
-# Install composer
+# Install composer and set correct permissions
 RUN mkdir ${COMPOSER_HOME} && \
-    curl -k -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-    chown -R www-data:www-data ${COMPOSER_HOME}
+    curl -k -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Add PHPINFO
+# Add Scripts
+COPY config/application.ini /usr/local/etc/php/conf.d/
 COPY scripts/index.php /var/www/html/index.php
-
-RUN chown -R www-data:www-data /var/www/html
