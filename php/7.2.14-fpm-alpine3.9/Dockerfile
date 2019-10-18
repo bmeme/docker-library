@@ -56,7 +56,8 @@ RUN docker-php-ext-install pdo_mysql && \
     pecl install redis && \
     docker-php-ext-enable mcrypt && \
     rm /etc/localtime && cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && \
-    echo "${TIMEZONE}" > /etc/timezone
+    echo "${TIMEZONE}" > /etc/timezone && \
+    ln -s /usr/bin/python3 /usr/bin/python
 
 # Install composer and set correct permissions
 RUN mkdir ${COMPOSER_HOME} && \
