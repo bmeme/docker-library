@@ -29,25 +29,15 @@ else
   /bin/sed -i "s@{{SHARED_DIRECTORY}}@${SHARED_DIRECTORY}@g" /etc/exports
 fi
 
-# This is here to demonstrate how multiple directories can be shared.
-# Any additional shares MUST be subdirectories of the root directory specified
-# by SHARED_DIRECTORY.
-
-for i in $(env | grep "ADDITIONAL_SHARE_DIR_*" | awk -F "=" '{print $2}')
+# Check if exist some extra shared directories and load them in /etc/exports
+for i in $(env | grep "EXTRA_SHARED_DIRECTORY_*" | awk -F "=" '{print $2}')
 do
     if [[ ! -z "${i}" ]]; then
         echo "Writing ${i} directory to /etc/exports file"
-        echo "{{SHARED_DIRECTORY_2}} {{PERMITTED}}({{READ_ONLY}},{{SYNC}},no_subtree_check,no_auth_nlm,insecure,no_root_squash)" >> /etc/exports
-        /bin/sed -i "s@{{SHARED_DIRECTORY_2}}@${i}@g" /etc/exports
+        echo "{{EXTRA_SHARED_DIRECTORY_1}} {{PERMITTED}}({{READ_ONLY}},{{SYNC}},no_subtree_check,no_auth_nlm,insecure,no_root_squash)" >> /etc/exports
+        /bin/sed -i "s@{{EXTRA_SHARED_DIRECTORY_1}}@${i}@g" /etc/exports
     fi
 done
-
-## Check if the SHARED_DIRECTORY_2 variable is empty
-#if [ ! -z "${SHARED_DIRECTORY_2}" ]; then
-#  echo "Writing SHARED_DIRECTORY_2 to /etc/exports file"
-#  echo "{{SHARED_DIRECTORY_2}} {{PERMITTED}}({{READ_ONLY}},{{SYNC}},no_subtree_check,no_auth_nlm,insecure,no_root_squash)" >> /etc/exports
-#  /bin/sed -i "s@{{SHARED_DIRECTORY_2}}@${SHARED_DIRECTORY_2}@g" /etc/exports
-#fi
 
 # Check if the PERMITTED variable is empty
 if [ -z "${PERMITTED}" ]; then
