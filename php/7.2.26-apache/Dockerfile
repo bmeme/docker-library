@@ -14,8 +14,7 @@ ENV IGBINARY_VERSION=3.1.0 \
     REDIS_VERSION=5.1.1
 
 # PHP environment variables
-ENV PHP_AUTO_PREPEND_FILE=${COMPOSER_HOME}/vendor/autoload.php \
-    PHP_MEMORY_LIMIT=512M \
+ENV PHP_MEMORY_LIMIT=512M \
     PHP_MAX_EXECUTION_TIME=60 \
     PHP_LOG_ENABLED=1 \
     PHP_ERROR_LOG=/tmp/php_errors.log \
@@ -109,7 +108,6 @@ RUN set -eux; \
     mkdir ${COMPOSER_HOME}; \
     curl -k -sS https://getcomposer.org/installer \
         | php -- --install-dir=/usr/local/bin --filename=composer; \
-    composer global require symfony/var-dumper; \
     # install ansible
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py; \
     python3 get-pip.py; \
@@ -140,7 +138,6 @@ RUN set -eux; \
     \
     # set application ini settings
     { \
-        echo 'auto_prepend_file = ${PHP_AUTO_PREPEND_FILE}'; \
         echo 'date.timezone = ${TIMEZONE}'; \
         echo 'error_log = ${PHP_ERROR_LOG}'; \
         echo 'log_errors = ${PHP_LOG_ENABLED}'; \
