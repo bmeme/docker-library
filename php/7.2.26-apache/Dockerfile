@@ -35,6 +35,8 @@ ENV PERSISTENT_PROGRAMS \
     git \
     default-mysql-client \
     patch \
+    python3 \
+    python3-distutils \
     tzdata \
     unzip \
     vim \
@@ -103,6 +105,15 @@ RUN set -eux; \
 		zip \
 	; \
 	\
+    # install composer
+    mkdir ${COMPOSER_HOME}; \
+    curl -k -sS https://getcomposer.org/installer \
+        | php -- --install-dir=/usr/local/bin --filename=composer; \
+    composer global require symfony/var-dumper; \
+    # install ansible
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py; \
+    python3 get-pip.py; \
+    pip install ansible; \
     # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
 	apt-mark manual ${savedAptMark}; \
@@ -118,11 +129,6 @@ RUN set -eux; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
-	# install composer
-    mkdir ${COMPOSER_HOME}; \
-    curl -k -sS https://getcomposer.org/installer \
-        | php -- --install-dir=/usr/local/bin --filename=composer; \
-    composer global require symfony/var-dumper; \
     # remove php source
     docker-php-source delete
 
