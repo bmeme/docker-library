@@ -1,0 +1,20 @@
+FROM bmeme/angular-dev:6.2.8-13
+MAINTAINER Daniele Piaggesi <daniele.piaggesi@bmeme.com>
+ENV REFRESHED_AT 2020-04-09
+
+RUN apt-get update && apt-get install -y apt-transport-https curl gnupg2 && \
+    curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list && \
+    apt-get update && apt-get install -y xvfb google-chrome-stable yarn && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ADD config/xvfb.sh /etc/init.d/xvfb
+ADD scripts/entrypoint-chrome.sh /entrypoint.sh
+
+RUN chmod +x /etc/init.d/xvfb && \
+    chmod +x /entrypoint.sh
+
+ENV DISPLAY :99.0
+ENV CHROME_BIN /usr/bin/google-chrome
+
+ENTRYPOINT ["/entrypoint.sh"]
