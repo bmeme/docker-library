@@ -3,7 +3,6 @@ LABEL maintainer="Michele Mondelli <michele.mondelli@bmeme.com>"
 
 ENV GRAALVM_VERSION 20.3.0
 ENV MAVEN_VERSION 3.6.3
-ENV MN_VERSION 2.2.1
 
 RUN apt-get update && \
     apt-get install -y git unzip zip curl build-essential zlib1g-dev && \
@@ -22,6 +21,16 @@ RUN cd /opt && \
     tar xf apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
     mv apache-maven-${MAVEN_VERSION} /opt/maven && \
     rm -f apache-maven-${MAVEN_VERSION}-bin.tar.gz
+
+ARG MN_VERSION
+ARG BUILD_DATE
+
+LABEL org.label-schema.schema-version="1.0"
+LABEL org.label-schema.build-date=$BUILD_DATE
+LABEL org.label-schema.name="bmeme/mn-dev"
+LABEL org.label-schema.version="${MN_VERSION}-jdk-11-graalvm"
+LABEL org.label-schema.description="Micronaut framework development image"
+LABEL org.label-schema.url="https://www.bmeme.com/"
 
 RUN cd /opt && \
     curl -L https://github.com/micronaut-projects/micronaut-starter/releases/download/v${MN_VERSION}/micronaut-cli-${MN_VERSION}.zip --output micronaut-cli-${MN_VERSION}.zip && \
