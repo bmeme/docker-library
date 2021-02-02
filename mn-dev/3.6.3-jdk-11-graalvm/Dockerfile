@@ -1,5 +1,4 @@
 FROM debian:stable-slim
-LABEL maintainer="Michele Mondelli <michele.mondelli@bmeme.com>"
 
 ENV GRAALVM_VERSION 20.3.0
 ENV MAVEN_VERSION 3.6.3
@@ -25,12 +24,13 @@ RUN cd /opt && \
 ARG MN_VERSION
 ARG BUILD_DATE
 
-LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.build-date=$BUILD_DATE
-LABEL org.label-schema.name="bmeme/mn-dev"
-LABEL org.label-schema.version="${MN_VERSION}-jdk-11-graalvm"
-LABEL org.label-schema.description="Micronaut framework development image"
-LABEL org.label-schema.url="https://www.bmeme.com/"
+LABEL maintainer="Michele Mondelli <michele.mondelli@bmeme.com>" \
+      org.label-schema.schema-version="1.0" \
+      org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="bmeme/mn-dev" \
+      org.label-schema.version="${MN_VERSION}-jdk-11-graalvm" \
+      org.label-schema.description="Micronaut framework development image" \
+      org.label-schema.url="https://www.bmeme.com/"
 
 RUN cd /opt && \
     curl -L https://github.com/micronaut-projects/micronaut-starter/releases/download/v${MN_VERSION}/micronaut-cli-${MN_VERSION}.zip --output micronaut-cli-${MN_VERSION}.zip && \
