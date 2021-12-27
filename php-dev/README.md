@@ -1,3 +1,8 @@
+# THESE IMAGES ARE DEPRECATED
+
+@see instead https://github.com/bmeme/docker-php
+
+
 ### Overview
 These are Docker images based on Debian/Jessie with a working webserver, ready to be used for php development. They are all built starting from [official PHP repository](https://hub.docker.com/_/php/) as you can see looking our Dockerfile (see previous paragraph).
 
