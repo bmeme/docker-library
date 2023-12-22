@@ -1,3 +1,16 @@
+IMPORTANT
+======
+
+This repo is **DEPRECATED** and will be removed soon from GitHub.
+
+If you are interested in the images here contained consider that:
+
+- **php** image packaged by Bmeme is now developed [on this alternative repo](https://github.com/bmeme/docker-php)
+- **mule** image packaged by Bmeme is now developed [on this alternative repo](https://github.com/bmeme/docker-mule-standalone)
+- **angular-dev** image packaged by Bmeme is now developed [on this alternative repo](https://github.com/bmeme/angular-dev)
+
+Other images in this repo will be deprecated and no longer maintained.
+
 # About this repo
 
 This repository contains the Bmeme "Docker Library".
